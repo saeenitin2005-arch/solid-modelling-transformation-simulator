@@ -1,14 +1,82 @@
 import matplotlib.pyplot as plt
+import math
+
 
 # ==========================================
-# 1. ORIGINAL CUBE
+# ROTATION FUNCTIONS
+# ==========================================
+
+def rotate_x(x, y, z, angle):
+    """
+    Rotate a point around the X-axis.
+    """
+
+    new_x = x
+
+    new_y = (
+        y * math.cos(angle)
+        - z * math.sin(angle)
+    )
+
+    new_z = (
+        y * math.sin(angle)
+        + z * math.cos(angle)
+    )
+
+    return new_x, new_y, new_z
+
+
+def rotate_y(x, y, z, angle):
+    """
+    Rotate a point around the Y-axis.
+    """
+
+    new_x = (
+        x * math.cos(angle)
+        + z * math.sin(angle)
+    )
+
+    new_y = y
+
+    new_z = (
+        -x * math.sin(angle)
+        + z * math.cos(angle)
+    )
+
+    return new_x, new_y, new_z
+
+
+def rotate_z(x, y, z, angle):
+    """
+    Rotate a point around the Z-axis.
+    """
+
+    new_x = (
+        x * math.cos(angle)
+        - y * math.sin(angle)
+    )
+
+    new_y = (
+        x * math.sin(angle)
+        + y * math.cos(angle)
+    )
+
+    new_z = z
+
+    return new_x, new_y, new_z
+
+
+# ==========================================
+# ORIGINAL CUBE
 # ==========================================
 
 x = [0, 1, 1, 0, 0, 1, 1, 0]
 y = [0, 0, 1, 1, 0, 0, 1, 1]
 z = [0, 0, 0, 0, 1, 1, 1, 1]
 
-# Connections between cube vertices
+
+# Cube edges
+
 edges = [
     (0, 1), (1, 2), (2, 3), (3, 0),
     (4, 5), (5, 6), (6, 7), (7, 4),
@@ -17,42 +85,51 @@ edges = [
 
 
 # ==========================================
-# 2. TRANSLATION
+# ROTATION SETTINGS
 # ==========================================
 
-Tx = 2
-Ty = 1
-Tz = 1
+angle_degrees = 45
 
-x_translated = [value + Tx for value in x]
-y_translated = [value + Ty for value in y]
-z_translated = [value + Tz for value in z]
+angle = math.radians(angle_degrees)
 
 
 # ==========================================
-# 3. SCALING
+# ROTATE ALL CUBE VERTICES
 # ==========================================
 
-Sx = 2
-Sy = 2
-Sz = 2
+x_rotated = []
+y_rotated = []
+z_rotated = []
 
-x_scaled = [value * Sx for value in x]
-y_scaled = [value * Sy for value in y]
-z_scaled = [value * Sz for value in z]
+
+for i in range(len(x)):
+
+    new_x, new_y, new_z = rotate_z(
+        x[i],
+        y[i],
+        z[i],
+        angle
+    )
+
+    x_rotated.append(new_x)
+    y_rotated.append(new_y)
+    z_rotated.append(new_z)
 
 
 # ==========================================
-# 4. CREATE 3D VIEW
+# CREATE 3D VIEW
 # ==========================================
 
 fig = plt.figure(figsize=(10, 7))
 
-ax = fig.add_subplot(111, projection="3d")
+ax = fig.add_subplot(
+    111,
+    projection="3d"
+)
 
 
 # ==========================================
-# 5. DRAW ORIGINAL CUBE
+# DRAW ORIGINAL CUBE
 # ==========================================
 
 for start, end in edges:
@@ -66,51 +143,34 @@ for start, end in edges:
 
 
 # ==========================================
-# 6. DRAW TRANSLATED CUBE
+# DRAW ROTATED CUBE
 # ==========================================
 
 for start, end in edges:
 
     ax.plot(
-        [x_translated[start], x_translated[end]],
-        [y_translated[start], y_translated[end]],
-        [z_translated[start], z_translated[end]],
+        [x_rotated[start], x_rotated[end]],
+        [y_rotated[start], y_rotated[end]],
+        [z_rotated[start], z_rotated[end]],
         linewidth=2
     )
 
 
 # ==========================================
-# 7. DRAW SCALED CUBE
-# ==========================================
-
-for start, end in edges:
-
-    ax.plot(
-        [x_scaled[start], x_scaled[end]],
-        [y_scaled[start], y_scaled[end]],
-        [z_scaled[start], z_scaled[end]],
-        linewidth=2
-    )
-
-
-# ==========================================
-# 8. AXIS LABELS
+# LABELS
 # ==========================================
 
 ax.set_xlabel("X Axis")
 ax.set_ylabel("Y Axis")
 ax.set_zlabel("Z Axis")
 
-
-# ==========================================
-# 9. TITLE
-# ==========================================
-
-ax.set_title("Solid Modelling Transformation Simulator")
+ax.set_title(
+    "3D Solid Modelling - Rotation"
+)
 
 
 # ==========================================
-# 10. DISPLAY
+# DISPLAY
 # ==========================================
 
 plt.show()
